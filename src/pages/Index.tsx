@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Bluetooth, Music, Search, Grid3X3, List, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -212,6 +213,23 @@ const Index = () => {
           viewMode={viewMode}
         />
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-purple-500/20 mt-12 py-6 glass-effect">
+        <div className="container mx-auto px-4 text-center">
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">
+              🎵 <span className="font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">CR Music</span> - Protótipo de Interface
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Desenvolvido por <span className="text-purple-400 font-medium">Caio Ribeiro</span> • 2025
+            </p>
+            <p className="text-xs text-muted-foreground/80">
+              Interface de demonstração para aplicativo de música
+            </p>
+          </div>
+        </div>
+      </footer>
 
       {/* Mini Player */}
       {currentSong && (
