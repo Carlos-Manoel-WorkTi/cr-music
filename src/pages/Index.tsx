@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bluetooth, Music, Search, Grid3X3, List } from 'lucide-react';
+import { Bluetooth, Music, Search, Grid3X3, List, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import BluetoothPanel from '@/components/BluetoothPanel';
@@ -28,6 +28,8 @@ const Index = () => {
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -109,12 +111,17 @@ const Index = () => {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="hidden md:flex items-center gap-2">
+              {/* View Mode Toggle */}
+              <div className="hidden md:flex items-center gap-1 bg-muted/20 rounded-lg p-1">
                 <Button
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('list')}
-                  className="rounded-full"
+                  className={`rounded-md ${
+                    viewMode === 'list' 
+                      ? 'bg-purple-500 text-white hover:bg-purple-600' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                  }`}
                 >
                   <List size={16} />
                 </Button>
@@ -122,31 +129,61 @@ const Index = () => {
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className="rounded-full"
+                  className={`rounded-md ${
+                    viewMode === 'grid' 
+                      ? 'bg-purple-500 text-white hover:bg-purple-600' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                  }`}
                 >
                   <Grid3X3 size={16} />
                 </Button>
               </div>
+
+              {/* Search */}
+              <div className="flex items-center">
+                {isSearchOpen ? (
+                  <div className="flex items-center gap-2 bg-muted/20 rounded-lg px-3 py-2">
+                    <Search size={16} className="text-muted-foreground" />
+                    <Input
+                      placeholder="Buscar músicas..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-48 bg-transparent border-none p-0 h-auto focus-visible:ring-0 text-sm"
+                      autoFocus
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setIsSearchOpen(false);
+                        setSearchQuery('');
+                      }}
+                      className="p-1 h-auto hover:bg-muted/40"
+                    >
+                      <X size={14} />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsSearchOpen(true)}
+                    className="rounded-full glass-effect hover:bg-purple-500/20"
+                  >
+                    <Search size={18} />
+                  </Button>
+                )}
+              </div>
+
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsBluetoothOpen(true)}
-                className="rounded-full glass-effect"
+                className="rounded-full glass-effect hover:bg-purple-500/20"
               >
                 <Bluetooth size={18} />
               </Button>
               <ThemeToggle />
-            </div>
-          </div>
-
-          {/* Search Bar */}
-          <div className="mt-4 max-w-md">
-            <div className="relative">
-              <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Buscar músicas, artistas, álbuns..."
-                className="pl-10 glass-effect border-purple-500/30"
-              />
             </div>
           </div>
         </div>
