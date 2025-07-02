@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Bluetooth, Music, Search, Grid3X3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,8 +12,9 @@ interface Song {
   id: string;
   title: string;
   artist: string;
-  album?: string;
+  album: string;
   duration: string;
+  year?: number;
   cover?: string;
   isNew?: boolean;
 }
@@ -33,25 +33,25 @@ const Index = () => {
 
   // Sample data
   const recentSongs: Song[] = [
-    { id: '1', title: 'Blinding Lights', artist: 'The Weeknd', album: 'After Hours', duration: '3:20', isNew: true },
-    { id: '2', title: 'Watermelon Sugar', artist: 'Harry Styles', album: 'Fine Line', duration: '2:54' },
-    { id: '3', title: 'Levitating', artist: 'Dua Lipa', album: 'Future Nostalgia', duration: '3:23' },
-    { id: '4', title: 'Good 4 U', artist: 'Olivia Rodrigo', album: 'SOUR', duration: '2:58', isNew: true },
-    { id: '5', title: 'Stay', artist: 'The Kid LAROI, Justin Bieber', album: 'F*CK LOVE 3', duration: '2:21' },
+    { id: '1', title: 'Blinding Lights', artist: 'The Weeknd', album: 'After Hours', duration: '3:20', year: 2020, isNew: true, cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop' },
+    { id: '2', title: 'Watermelon Sugar', artist: 'Harry Styles', album: 'Fine Line', duration: '2:54', year: 2020, cover: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop' },
+    { id: '3', title: 'Levitating', artist: 'Dua Lipa', album: 'Future Nostalgia', duration: '3:23', year: 2020, cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop' },
+    { id: '4', title: 'Good 4 U', artist: 'Olivia Rodrigo', album: 'SOUR', duration: '2:58', year: 2021, isNew: true, cover: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop' },
+    { id: '5', title: 'Stay', artist: 'The Kid LAROI, Justin Bieber', album: 'F*CK LOVE 3', duration: '2:21', year: 2021, cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop' },
   ];
 
   const newReleases: Song[] = [
-    { id: '6', title: 'Anti-Hero', artist: 'Taylor Swift', album: 'Midnights', duration: '3:20', isNew: true },
-    { id: '7', title: 'Unholy', artist: 'Sam Smith ft. Kim Petras', album: 'Gloria', duration: '2:36', isNew: true },
-    { id: '8', title: 'As It Was', artist: 'Harry Styles', album: 'Harry\'s House', duration: '2:47', isNew: true },
-    { id: '9', title: 'Heat Waves', artist: 'Glass Animals', album: 'Dreamland', duration: '3:58', isNew: true },
+    { id: '6', title: 'Anti-Hero', artist: 'Taylor Swift', album: 'Midnights', duration: '3:20', year: 2022, isNew: true, cover: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop' },
+    { id: '7', title: 'Unholy', artist: 'Sam Smith ft. Kim Petras', album: 'Gloria', duration: '2:36', year: 2023, isNew: true, cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop' },
+    { id: '8', title: 'As It Was', artist: 'Harry Styles', album: 'Harry\'s House', duration: '2:47', year: 2022, isNew: true, cover: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop' },
+    { id: '9', title: 'Heat Waves', artist: 'Glass Animals', album: 'Dreamland', duration: '3:58', year: 2020, isNew: true, cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop' },
   ];
 
   const popularSongs: Song[] = [
-    { id: '10', title: 'Flowers', artist: 'Miley Cyrus', album: 'Endless Summer Vacation', duration: '3:20' },
-    { id: '11', title: 'Calm Down', artist: 'Rema & Selena Gomez', album: 'Rave & Roses', duration: '3:59' },
-    { id: '12', title: 'Bad Habit', artist: 'Steve Lacy', album: 'Gemini Rights', duration: '3:51' },
-    { id: '13', title: 'Shivers', artist: 'Ed Sheeran', album: '= (Equals)', duration: '3:27' },
+    { id: '10', title: 'Flowers', artist: 'Miley Cyrus', album: 'Endless Summer Vacation', duration: '3:20', year: 2023, cover: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop' },
+    { id: '11', title: 'Calm Down', artist: 'Rema & Selena Gomez', album: 'Rave & Roses', duration: '3:59', year: 2022, cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop' },
+    { id: '12', title: 'Bad Habit', artist: 'Steve Lacy', album: 'Gemini Rights', duration: '3:51', year: 2022, cover: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop' },
+    { id: '13', title: 'Shivers', artist: 'Ed Sheeran', album: '= (Equals)', duration: '3:27', year: 2021, cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop' },
   ];
 
   useEffect(() => {
@@ -158,18 +158,21 @@ const Index = () => {
           title="🎵 Tocadas Recentemente"
           songs={recentSongs}
           onPlaySong={handlePlaySong}
+          viewMode={viewMode}
         />
 
         <MusicList
           title="🚀 Novos Lançamentos"
           songs={newReleases}
           onPlaySong={handlePlaySong}
+          viewMode={viewMode}
         />
 
         <MusicList
           title="🔥 Mais Populares"
           songs={popularSongs}
           onPlaySong={handlePlaySong}
+          viewMode={viewMode}
         />
       </main>
 
