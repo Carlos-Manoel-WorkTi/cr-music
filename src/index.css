@@ -8,30 +8,30 @@
     --background: 13 13 15; /* dark-surface-900 */
     --foreground: 250 250 250;
 
-    --card: 24 24 27; /* dark-surface-100 */
+    --card: 20 20 23; /* darker card background */
     --card-foreground: 250 250 250;
 
-    --popover: 24 24 27;
+    --popover: 20 20 23;
     --popover-foreground: 250 250 250;
 
-    --primary: 195 100% 50%; /* electric-blue-500 */
-    --primary-foreground: 13 13 15;
+    --primary: 147 51 234; /* purple-600 */
+    --primary-foreground: 250 250 250;
 
-    --secondary: 240 28% 70%; /* soft-purple-500 */
+    --secondary: 168 85 247; /* purple-400 */
     --secondary-foreground: 13 13 15;
 
-    --muted: 39 39 42; /* dark-surface-200 */
+    --muted: 30 30 35; /* slightly lighter than card */
     --muted-foreground: 161 161 170;
 
-    --accent: 195 100% 50%;
-    --accent-foreground: 13 13 15;
+    --accent: 147 51 234;
+    --accent-foreground: 250 250 250;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 250 250 250;
 
-    --border: 39 39 42;
-    --input: 39 39 42;
-    --ring: 195 100% 50%;
+    --border: 30 30 35;
+    --input: 30 30 35;
+    --ring: 147 51 234;
 
     --radius: 0.75rem;
   }
@@ -75,19 +75,19 @@
 
 @layer components {
   .glow-effect {
-    @apply shadow-glow-blue transition-all duration-300;
+    @apply shadow-glow-purple transition-all duration-300;
   }
   
   .glow-effect:hover {
-    @apply shadow-glow-blue scale-105;
+    @apply shadow-glow-purple scale-105;
   }
 
   .audio-visualizer-bar {
-    @apply bg-gradient-to-t from-electric-blue-500 to-soft-purple-500 rounded-full;
+    @apply bg-gradient-to-t from-purple-500 to-pink-400 rounded-full;
     animation: audio-wave 1.5s ease-in-out infinite;
   }
 
   .glass-effect {
-    @apply bg-black/20 backdrop-blur-md border border-white/10;
+    @apply bg-black/40 backdrop-blur-md border border-purple-500/20;
   }
 }

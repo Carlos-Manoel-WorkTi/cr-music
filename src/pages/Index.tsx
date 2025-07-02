@@ -1,45 +1,61 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Bluetooth, Music, Heart, Volume2 } from 'lucide-react';
+import { Bluetooth, Music, Search, Grid3X3, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
-import AudioVisualizer from '@/components/AudioVisualizer';
-import PlayerControls from '@/components/PlayerControls';
+import { Input } from '@/components/ui/input';
 import BluetoothPanel from '@/components/BluetoothPanel';
 import PlaylistManager from '@/components/PlaylistManager';
 import ThemeToggle from '@/components/ThemeToggle';
+import MusicList from '@/components/MusicList';
+import MiniPlayer from '@/components/MiniPlayer';
 
 interface Song {
   id: string;
   title: string;
   artist: string;
+  album?: string;
   duration: string;
   cover?: string;
+  isNew?: boolean;
 }
 
 const Index = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(200); // 3:20 em segundos
+  const [duration, setDuration] = useState(200);
   const [volume, setVolume] = useState([75]);
-  const [isRepeat, setIsRepeat] = useState(false);
-  const [isShuffle, setShuffle] = useState(false);
   const [isBluetoothOpen, setIsBluetoothOpen] = useState(false);
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
-  const [isFavorited, setIsFavorited] = useState(false);
-
-  const [currentSong, setCurrentSong] = useState<Song>({
-    id: '1',
-    title: 'Blinding Lights',
-    artist: 'The Weeknd',
-    duration: '3:20'
-  });
+  const [currentSong, setCurrentSong] = useState<Song | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Sample data
+  const recentSongs: Song[] = [
+    { id: '1', title: 'Blinding Lights', artist: 'The Weeknd', album: 'After Hours', duration: '3:20', isNew: true },
+    { id: '2', title: 'Watermelon Sugar', artist: 'Harry Styles', album: 'Fine Line', duration: '2:54' },
+    { id: '3', title: 'Levitating', artist: 'Dua Lipa', album: 'Future Nostalgia', duration: '3:23' },
+    { id: '4', title: 'Good 4 U', artist: 'Olivia Rodrigo', album: 'SOUR', duration: '2:58', isNew: true },
+    { id: '5', title: 'Stay', artist: 'The Kid LAROI, Justin Bieber', album: 'F*CK LOVE 3', duration: '2:21' },
+  ];
+
+  const newReleases: Song[] = [
+    { id: '6', title: 'Anti-Hero', artist: 'Taylor Swift', album: 'Midnights', duration: '3:20', isNew: true },
+    { id: '7', title: 'Unholy', artist: 'Sam Smith ft. Kim Petras', album: 'Gloria', duration: '2:36', isNew: true },
+    { id: '8', title: 'As It Was', artist: 'Harry Styles', album: 'Harry\'s House', duration: '2:47', isNew: true },
+    { id: '9', title: 'Heat Waves', artist: 'Glass Animals', album: 'Dreamland', duration: '3:58', isNew: true },
+  ];
+
+  const popularSongs: Song[] = [
+    { id: '10', title: 'Flowers', artist: 'Miley Cyrus', album: 'Endless Summer Vacation', duration: '3:20' },
+    { id: '11', title: 'Calm Down', artist: 'Rema & Selena Gomez', album: 'Rave & Roses', duration: '3:59' },
+    { id: '12', title: 'Bad Habit', artist: 'Steve Lacy', album: 'Gemini Rights', duration: '3:51' },
+    { id: '13', title: 'Shivers', artist: 'Ed Sheeran', album: '= (Equals)', duration: '3:27' },
+  ];
+
   useEffect(() => {
-    if (isPlaying) {
+    if (isPlaying && currentSong) {
       intervalRef.current = setInterval(() => {
         setCurrentTime(prev => {
           if (prev >= duration) {
@@ -60,156 +76,126 @@ const Index = () => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isPlaying, duration]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  }, [isPlaying, duration, currentSong]);
 
   const handlePlay = () => setIsPlaying(true);
   const handlePause = () => setIsPlaying(false);
-  const handleNext = () => {
-    // Implementar lógica de próxima música
-    console.log('Próxima música');
-  };
-  const handlePrevious = () => {
-    // Implementar lógica de música anterior
-    console.log('Música anterior');
-  };
-  const handleRepeat = () => setIsRepeat(!isRepeat);
-  const handleShuffle = () => setShuffle(!isShuffle);
+  const handleNext = () => console.log('Next song');
+  const handlePrevious = () => console.log('Previous song');
 
   const handlePlaySong = (song: Song) => {
     setCurrentSong(song);
     setCurrentTime(0);
+    setDuration(parseInt(song.duration.split(':')[0]) * 60 + parseInt(song.duration.split(':')[1]));
     setIsPlaying(true);
-    setIsPlaylistOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark-surface-900 via-dark-surface-800 to-dark-surface-900 text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 text-foreground pb-20">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 md:p-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-electric-blue-500 to-soft-purple-500 rounded-xl flex items-center justify-center">
-            <Music size={24} className="text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-electric-blue-500 to-soft-purple-500 bg-clip-text text-transparent">
-              CR Music
-            </h1>
-            <p className="text-xs text-muted-foreground">Player Moderno</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsBluetoothOpen(true)}
-            className="rounded-full bg-muted/20 backdrop-blur-md border border-white/10 hover:bg-muted/30 transition-all duration-300"
-          >
-            <Bluetooth size={18} />
-          </Button>
-          <ThemeToggle />
-        </div>
-      </header>
-
-      {/* Main Player */}
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <Card className="glass-effect border-electric-blue-500/30 shadow-glow-soft">
-          <CardContent className="p-8 space-y-8">
-            {/* Album Art & Song Info */}
-            <div className="text-center space-y-4">
-              <div className="w-48 h-48 mx-auto bg-gradient-to-br from-electric-blue-500/20 to-soft-purple-500/20 rounded-2xl flex items-center justify-center border border-electric-blue-500/30 shadow-glow-blue">
-                <Music size={64} className="text-electric-blue-500" />
+      <header className="sticky top-0 z-40 glass-effect border-b border-purple-500/20">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                <Music size={24} className="text-white" />
               </div>
-              
-              <div className="space-y-2">
-                <h2 className="text-2xl md:text-3xl font-bold">{currentSong.title}</h2>
-                <p className="text-lg text-muted-foreground">{currentSong.artist}</p>
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  CR Music
+                </h1>
+                <p className="text-xs text-muted-foreground">Sua música, seu estilo</p>
               </div>
+            </div>
 
+            <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-2">
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className="rounded-full"
+                >
+                  <List size={16} />
+                </Button>
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className="rounded-full"
+                >
+                  <Grid3X3 size={16} />
+                </Button>
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsFavorited(!isFavorited)}
-                className={`rounded-full transition-all duration-300 ${
-                  isFavorited 
-                    ? 'text-red-500 hover:text-red-600' 
-                    : 'text-muted-foreground hover:text-red-500'
-                }`}
+                onClick={() => setIsBluetoothOpen(true)}
+                className="rounded-full glass-effect"
               >
-                <Heart size={20} fill={isFavorited ? 'currentColor' : 'none'} />
+                <Bluetooth size={18} />
               </Button>
+              <ThemeToggle />
             </div>
+          </div>
 
-            {/* Audio Visualizer */}
-            <AudioVisualizer isPlaying={isPlaying} />
-
-            {/* Progress Bar */}
-            <div className="space-y-3">
-              <Slider
-                value={[currentTime]}
-                max={duration}
-                step={1}
-                onValueChange={(value) => setCurrentTime(value[0])}
-                className="w-full"
+          {/* Search Bar */}
+          <div className="mt-4 max-w-md">
+            <div className="relative">
+              <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Buscar músicas, artistas, álbuns..."
+                className="pl-10 glass-effect border-purple-500/30"
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatTime(duration)}</span>
-              </div>
             </div>
+          </div>
+        </div>
+      </header>
 
-            {/* Player Controls */}
-            <PlayerControls
-              isPlaying={isPlaying}
-              onPlay={handlePlay}
-              onPause={handlePause}
-              onNext={handleNext}
-              onPrevious={handlePrevious}
-              onRepeat={handleRepeat}
-              onShuffle={handleShuffle}
-              isRepeat={isRepeat}
-              isShuffle={isShuffle}
-            />
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-6 space-y-8">
+        <MusicList
+          title="🎵 Tocadas Recentemente"
+          songs={recentSongs}
+          onPlaySong={handlePlaySong}
+        />
 
-            {/* Volume & Actions */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1 max-w-xs">
-                <Volume2 size={20} className="text-muted-foreground" />
-                <Slider
-                  value={volume}
-                  max={100}
-                  step={1}
-                  onValueChange={setVolume}
-                  className="flex-1"
-                />
-              </div>
+        <MusicList
+          title="🚀 Novos Lançamentos"
+          songs={newReleases}
+          onPlaySong={handlePlaySong}
+        />
 
-              <Button
-                variant="outline"
-                onClick={() => setIsPlaylistOpen(true)}
-                className="rounded-full border-electric-blue-500/30 hover:border-electric-blue-500 hover:bg-electric-blue-500/10 transition-all duration-300"
-              >
-                <Music size={18} className="mr-2" />
-                Playlists
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <MusicList
+          title="🔥 Mais Populares"
+          songs={popularSongs}
+          onPlaySong={handlePlaySong}
+        />
       </main>
 
-      {/* Bluetooth Panel */}
+      {/* Mini Player */}
+      {currentSong && (
+        <MiniPlayer
+          currentSong={currentSong}
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={duration}
+          volume={volume}
+          onPlay={handlePlay}
+          onPause={handlePause}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          onVolumeChange={setVolume}
+          onTimeChange={(value) => setCurrentTime(value[0])}
+        />
+      )}
+
+      {/* Panels */}
       <BluetoothPanel 
         isOpen={isBluetoothOpen}
         onClose={() => setIsBluetoothOpen(false)}
       />
 
-      {/* Playlist Manager */}
       <PlaylistManager
         isOpen={isPlaylistOpen}
         onClose={() => setIsPlaylistOpen(false)}

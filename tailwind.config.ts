@@ -124,7 +124,7 @@ export default {
 			},
 			boxShadow: {
 				'glow-blue': '0 0 20px rgba(0, 191, 255, 0.3)',
-				'glow-purple': '0 0 20px rgba(154, 122, 214, 0.3)',
+				'glow-purple': '0 0 20px rgba(147, 51, 234, 0.3)',
 				'glow-soft': '0 4px 20px rgba(0, 0, 0, 0.3)'
 			}
 		}
